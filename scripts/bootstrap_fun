@@ -143,7 +143,7 @@ determineScalaVersion() {
     echo "No SCALA_VER_BASE specified."
 
     travis_fold_start determineScalaVersion "Determining Scala version"
-    $SBT_CMD $sbtArgs 'set baseVersionSuffix in Global := "SHA"' generateBuildCharacterPropertiesFile
+    $SBT_CMD $sbtArgs 'set baseVersionSuffix in Global := "SHA"' "show library/scalaInstance" generateBuildCharacterPropertiesFile
     travis_fold_end determineScalaVersion
     parseScalaProperties "buildcharacter.properties"
     SCALA_VER_BASE="$maven_version_base"
@@ -261,7 +261,7 @@ buildLocker() {
   if [ ! -z "$STARR_VER" ]; then SET_STARR=-Dstarr.version=$STARR_VER; fi
 
   travis_fold_start locker "Building locker"
-  $SBT_CMD -no-colors $sbtArgs $SET_STARR --warn "setupBootstrapLocker $integrationRepoUrl $SCALA_VER" $clean publish
+  $SBT_CMD -no-colors $sbtArgs $SET_STARR --warn "setupBootstrapLocker $integrationRepoUrl $SCALA_VER" $clean "show library/scalaInstance" publish
   travis_fold_end locker
 }
 
@@ -282,6 +282,7 @@ buildQuick() {
       -Dstarr.version=$SCALA_VER \
       ${updatedModuleVersions[@]} \
       "setupBootstrapQuick $integrationRepoUrl $SCALA_VER" \
+      "show library/scalaInstance" \
       "$@"
   travis_fold_end quick
 }
@@ -324,6 +325,7 @@ publishSonatype() {
       'set pgpSigningKey in Global := Some(new java.math.BigInteger("C03EF1D7D692BCFF", 16).longValue)' \
       'set pgpPassphrase in Global := Some(Array.empty)' \
       "setupBootstrapPublish $integrationRepoUrl $SCALA_VER" \
+      "show library/scalaInstance" \
       $publishSonatypeTaskCore
   travis_fold_end sona
 

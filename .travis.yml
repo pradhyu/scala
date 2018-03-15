@@ -13,6 +13,7 @@ cache:
 
 before_script:
   - (cd admin && ./init.sh)
+  - set -x
 
 stages:
   - name: build # also builds the spec using jekyll
@@ -82,7 +83,7 @@ jobs:
           - if [ -z "$SCALA_VER" ]; then echo "Environment not propagated. Caching issue?"; cat build/env ; exit 1; fi
           - source scripts/common
           - source scripts/bootstrap_fun
-          - if [ "$publishToSonatype" = "yes" ]; then publishSonatype; fi
+          - publishSonatype # if [ "$publishToSonatype" = "yes" ]; then publishSonatype; fi
           - triggerScalaDist
         # using bash conditional, because a travis condition on the stage won't work:
         # the `env` function only picks stuff up from yaml, not variables set in bash,
